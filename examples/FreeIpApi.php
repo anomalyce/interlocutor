@@ -3,10 +3,13 @@
 namespace Examples;
 
 use Throwable;
-use Anomalyce\Interlocutor\{ Contracts, InterlocutorException };
+use Psr\Http\Message\{ ResponseInterface, RequestInterface };
+use Anomalyce\Interlocutor\{ Contracts, InterlocutorException, Communicates };
 
 class FreeIpApi implements Contracts\Endpoint
 {
+  use Communicates;
+
   /**
    * Instantiate a new endpoint object.
    * 
@@ -36,7 +39,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function url(string $baseUrl = null): string
   {
-    return "https://freeipapi.com/api/json/${this->ipaddress}";
+    return "https://freeipapi.com/api/json/{$this->ipaddress}";
   }
 
   /**
@@ -74,9 +77,9 @@ class FreeIpApi implements Contracts\Endpoint
   /**
    * Interject the request.
    * 
-   * @return \Anomalyce\Interlocutor\Contracts\Request
+   * @return \Psr\Http\Message\RequestInterface
    */
-  public function interjectRequest(Contracts\Request $request): Contracts\Request
+  public function interjectRequest(RequestInterface $request): RequestInterface
   {
     return $request;
   }
@@ -84,11 +87,11 @@ class FreeIpApi implements Contracts\Endpoint
   /**
    * Transform the response.
    * 
-   * @return \Anomalyce\Interlocutor\Contracts\Response
+   * @return mixed
    */
-  public function transformResponse(Contracts\Response $response): Contracts\Response
+  public function transformResponse(mixed $response): mixed
   {
-    return $response;
+    return json_decode($response, true);
   }
 
   /**

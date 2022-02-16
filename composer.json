@@ -1,0 +1,39 @@
+{
+  "name": "anomalyce/interlocutor",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Anomalyce",
+      "email": "47085833+anomalyce@users.noreply.github.com"
+    }
+  ],
+  "support": {
+    "source": "https://github.com/anomalyce/interlocutor",
+    "issues": "https://github.com/anomalyce/interlocutor/issues",
+    "wiki": "https://github.com/anomalyce/interlocutor/wiki"
+  },
+  "require": {
+    "php": "^8.1",
+    "illuminate/pipeline": "^9.1.0",
+    "psr/http-message": "^1.0.1"
+  },
+  "require-dev": {
+    "guzzlehttp/guzzle": "~7.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Anomalyce\\Interlocutor\\": "src/"
+    }
+  },
+  "suggest": {
+    "guzzlehttp/guzzle": "Required for the GuzzleHttp engine."
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-main": "0.1.x-dev"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

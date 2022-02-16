@@ -4,15 +4,13 @@
 ```php
 use Anomalyce\Interlocutor\{ Interlocutor, Engines };
 
-$interlocutor = new Interlocutor(
-  new Engines\GuzzleHttp
-);
+$interlocutor = new Interlocutor(new Engines\GuzzleHttp);
 
-$endpoint = new \Anomalyce\Examples\FreeIpApi(
-  $_SERVER['REMOTE_ADDR']
-);
+$request = new \Examples\FreeIpApi($_SERVER['REMOTE_ADDR']);
 
-$response = $interlocutor->send($endpoint);
+$response = $request->send();
+
+print_r($response);
 ```
 
 ```json

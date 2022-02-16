@@ -4,6 +4,7 @@ namespace Anomalyce\Interlocutor\Contracts;
 
 use Throwable;
 use Anomalyce\Interlocutor\InterlocutorException;
+use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 
 interface Endpoint
 {
@@ -48,16 +49,16 @@ interface Endpoint
   /**
    * Interject the request.
    * 
-   * @return \Anomalyce\Interlocutor\Contracts\Request
+   * @return \Psr\Http\Message\RequestInterface
    */
-  public function interjectRequest(Request $request): Request;
+  public function interjectRequest(RequestInterface $request): RequestInterface;
 
   /**
    * Transform the response.
    * 
-   * @return \Anomalyce\Interlocutor\Contracts\Response
+   * @return mixed
    */
-  public function transformResponse(Response $response): Response;
+  public function transformResponse(mixed $response): mixed;
 
   /**
    * Handle any exceptions.
