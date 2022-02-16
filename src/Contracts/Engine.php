@@ -10,9 +10,10 @@ interface Engine
    * Build the HTTP request.
    * 
    * @param  \Anomalyce\Interlocutor\Contracts\Endpoint  $endpoint
+   * @param  \Anomalyce\Interlocutor\Contracts\Driver|null  $driver  null
    * @return \Psr\Http\Message\RequestInterface
    */
-  public function build(Endpoint $endpoint): RequestInterface;
+  public function build(Endpoint $endpoint, ?Driver $driver = null): RequestInterface;
 
   /**
    * Execute the HTTP request.

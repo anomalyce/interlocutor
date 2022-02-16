@@ -9,6 +9,27 @@ use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 interface Driver
 {
   /**
+   * Declare the base URL to use.
+   * 
+   * @return string
+   */
+  public function baseUrl(): string;
+
+  /**
+   * Declare the global data to send along with your request.
+   * 
+   * @return array
+   */
+  public function data(): array;
+
+  /**
+   * Declare the global HTTP headers to use.
+   * 
+   * @return array
+   */
+  public function headers(): array;
+
+  /**
    * Interject the request.
    * 
    * @return \Psr\Http\Message\RequestInterface

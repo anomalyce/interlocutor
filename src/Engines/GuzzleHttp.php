@@ -7,7 +7,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\GuzzleException;
 use Anomalyce\Interlocutor\InterlocutorException;
 use Psr\Http\Message\{ ResponseInterface, RequestInterface };
-use Anomalyce\Interlocutor\Contracts\{ Endpoint, Engine, HttpVerb };
+use Anomalyce\Interlocutor\Contracts\{ Driver, Endpoint, Engine, HttpVerb };
 
 class GuzzleHttp implements Engine
 {
@@ -26,21 +26,24 @@ class GuzzleHttp implements Engine
    * Build the HTTP request.
    * 
    * @param  \Anomalyce\Interlocutor\Contracts\Endpoint  $endpoint
+   * @param  \Anomalyce\Interlocutor\Contracts\Driver|null  $driver  null
    * @return \Psr\Http\Message\RequestInterface
    */
-  public function build(Endpoint $endpoint): RequestInterface
+  public function build(Endpoint $endpoint, ?Driver $driver = null): RequestInterface
   {
-    $options = [ 'headers' => $endpoint->headers() ];
+    $method = $endpoint->method();
 
-    if (! in_array($endpoint->method(), [ HttpVerb::GET, HttpVerb::HEAD, HttpVerb::OPTIONS ])) {
-      $options['form_params'] = $endpoint->data();
+    $url = $endpoint->url($driver?->baseUrl());
+
+    $headers = $endpoint->headers($driver?->headers() ?? []);
+
+    $options = [ 'headers' => $headers ];
+
+    if (! in_array($method, [ HttpVerb::GET, HttpVerb::HEAD, HttpVerb::OPTIONS ])) {
+      $options['form_params'] = $endpoint->data($driver?->data() ?? []);
     }
 
-    return new Request(
-      $endpoint->method()->name,
-      $endpoint->url(),
-      array_filter($options),
-    );
+    return new Request($method->name, $url, array_filter($options));
   }
 
   /**

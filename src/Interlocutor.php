@@ -59,11 +59,13 @@ class Interlocutor
    */
   public function send(Endpoint $endpoint): mixed
   {
+    $driver = $endpoint->throughDriver();
+
     try {
-      $pipes = array_filter([ $endpoint->throughDriver(), $endpoint ]);
+      $pipes = array_filter([ $driver, $endpoint ]);
 
       $request = (new Pipeline)
-        ->send($this->engine->build($endpoint))
+        ->send($this->engine->build($endpoint, $driver))
         ->through($pipes)
         ->via('interjectRequest')
         ->thenReturn();
@@ -78,7 +80,7 @@ class Interlocutor
     } catch (InterlocutorException $e) {
       $exception = (new Pipeline)
         ->send($e)
-        ->through(array_filter([ $endpoint, $endpoint->throughDriver() ]))
+        ->through(array_reverse($pipes))
         ->via('handleExceptions')
         ->thenReturn();
 
