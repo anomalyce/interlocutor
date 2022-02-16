@@ -12,6 +12,13 @@ use Anomalyce\Interlocutor\Contracts\{ Driver, Endpoint, Engine, HttpVerb };
 class GuzzleHttp implements Engine
 {
   /**
+   * Holds the GuzzleHttp client implementation.
+   * 
+   * @var \GuzzleHttp\Client
+   */
+  protected Client $client;
+
+  /**
    * Instantiate a new engine object.
    * 
    * @param  array  $options  []
@@ -19,7 +26,7 @@ class GuzzleHttp implements Engine
    */
   public function __construct(protected array $options = [])
   {
-    //
+    $this->client = new Client($this->options);
   }
 
   /**
@@ -57,9 +64,7 @@ class GuzzleHttp implements Engine
   public function execute(RequestInterface $request): ResponseInterface
   {
     try {
-      $client = new Client($this->options);
-
-      return $client->send($request);
+      return $this->client->send($request);
     } catch (GuzzleException $e) {
       throw new InterlocutorException($e->getMessage(), $e->getCode(), $e);
     }
