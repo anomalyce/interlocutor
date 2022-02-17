@@ -3,7 +3,6 @@
 namespace Anomalyce\Interlocutor\Contracts;
 
 use Throwable;
-use Anomalyce\Interlocutor\InterlocutorException;
 use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 
 interface Endpoint
@@ -63,8 +62,8 @@ interface Endpoint
   /**
    * Handle any exceptions.
    * 
-   * @param  \Anomalyce\Interlocutor\InterlocutorException  $exception
-   * @return \Throwable|null
+   * @param  \Throwable  $exception
+   * @return mixed
    */
-  public function handleExceptions(InterlocutorException $exception): ?Throwable;
+  public function handleExceptions(Throwable $exception): mixed;
 }

@@ -38,33 +38,33 @@ class GuzzleHttp implements Engine
    */
   public function build(Endpoint $endpoint, ?Driver $driver = null): RequestInterface
   {
-    $method = $endpoint->method();
-
     $url = $endpoint->url($driver?->baseUrl());
 
     $headers = $endpoint->headers($driver?->headers() ?? []);
 
-    $options = [ 'headers' => $headers ];
-
-    if (! in_array($method, [ HttpVerb::GET, HttpVerb::HEAD, HttpVerb::OPTIONS ])) {
-      $options['form_params'] = $endpoint->data($driver?->data() ?? []);
-    }
-
-    return new Request($method->name, $url, array_filter($options));
+    return new Request($endpoint->method()->name, $url, $headers);
   }
 
   /**
    * Execute the HTTP request.
    * 
    * @param  \Psr\Http\Message\RequestInterface  $request
+   * @param  \Anomalyce\Interlocutor\Contracts\Endpoint  $endpoint
+   * @param  \Anomalyce\Interlocutor\Contracts\Driver|null  $driver  null
    * @return \Psr\Http\Message\ResponseInterface
    * 
    * @throws \Anomalyce\Interlocutor\InterlocutorException
    */
-  public function execute(RequestInterface $request): ResponseInterface
+  public function execute(RequestInterface $request, Endpoint $endpoint, ?Driver $driver = null): ResponseInterface
   {
     try {
-      return $this->client->send($request);
+      $options = [];
+
+      if (! in_array($endpoint->method(), [ HttpVerb::GET, HttpVerb::HEAD, HttpVerb::OPTIONS ])) {
+        $options['form_params'] = $endpoint->data($driver?->data() ?? []);
+      }
+
+      return $this->client->send($request, $options);
     } catch (GuzzleException $e) {
       throw new InterlocutorException($e->getMessage(), $e->getCode(), $e);
     }

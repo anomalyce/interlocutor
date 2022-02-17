@@ -2,7 +2,7 @@
 
 namespace Anomalyce\Interlocutor;
 
-trait Communicates
+trait Interlocutory
 {
   /**
    * Send the endpoint object through the Interlocutor.

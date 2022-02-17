@@ -19,9 +19,11 @@ interface Engine
    * Execute the HTTP request.
    * 
    * @param  \Psr\Http\Message\RequestInterface  $request
+   * @param  \Anomalyce\Interlocutor\Contracts\Endpoint  $endpoint
+   * @param  \Anomalyce\Interlocutor\Contracts\Driver|null  $driver  null
    * @return \Psr\Http\Message\ResponseInterface
    * 
    * @throws \Anomalyce\Interlocutor\InterlocutorException
    */
-  public function execute(RequestInterface $request): ResponseInterface;
+  public function execute(RequestInterface $request, Endpoint $endpoint, ?Driver $driver = null): ResponseInterface;
 }

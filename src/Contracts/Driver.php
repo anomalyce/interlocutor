@@ -3,11 +3,20 @@
 namespace Anomalyce\Interlocutor\Contracts;
 
 use Throwable;
-use Anomalyce\Interlocutor\InterlocutorException;
 use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 
 interface Driver
 {
+  /**
+   * Catch the configuration options passed to the driver from the outside.
+   * 
+   * @see \Anomalyce\Interlocutor\Interlocutor::configure()
+   * 
+   * @param  array  $options  []
+   * @return void
+   */
+  public function configuration(array $options = []): void;
+
   /**
    * Declare the base URL to use.
    * 
@@ -46,8 +55,8 @@ interface Driver
   /**
    * Handle any exceptions.
    * 
-   * @param  \Anomalyce\Interlocutor\InterlocutorException  $exception
-   * @return \Throwable|null
+   * @param  \Throwable  $exception
+   * @return mixed
    */
-  public function handleExceptions(InterlocutorException $exception): ?Throwable;
+  public function handleExceptions(Throwable $exception): mixed;
 }

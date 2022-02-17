@@ -2,10 +2,11 @@
 
 namespace Anomalyce\Interlocutor;
 
+use Closure;
 use Throwable;
 use Illuminate\Pipeline\Pipeline;
 use Psr\Http\Message\ResponseInterface;
-use Anomalyce\Interlocutor\Contracts\{ Endpoint, Engine };
+use Anomalyce\Interlocutor\Contracts\{ Driver, Endpoint, Engine };
 
 class Interlocutor
 {
@@ -24,6 +25,13 @@ class Interlocutor
   protected Engine $engine;
 
   /**
+   * Holds the driver configuration options.
+   * 
+   * @var array
+   */
+  protected static array $drivers = [];
+
+  /**
    * Instantiate a new interlocutor object.
    * 
    * @param  \Anomalyce\Interlocutor\Contracts\Engine  $engine
@@ -39,16 +47,17 @@ class Interlocutor
   /**
    * Create or retrieve the current Interlocutor implementation.
    * 
-   * @param  ...  $arguments
    * @return $this
+   * 
+   * @throws \Anomalyce\Interlocutor\InterlocutorException
    */
-  public static function getInstance(...$arguments): self
+  public static function getInstance(): self
   {
     if (static::$instance instanceof self) {
       return static::$instance;
     }
 
-    return new self(...$arguments);
+    throw new InterlocutorException('You must first instantiate an Interlocutor object.', 501);
   }
 
   /**
@@ -61,6 +70,8 @@ class Interlocutor
   {
     $driver = $endpoint->throughDriver();
 
+    $driver->configuration($this->getDriverConfiguration($driver));
+
     try {
       $pipes = array_filter([ $driver, $endpoint ]);
 
@@ -71,24 +82,51 @@ class Interlocutor
         ->thenReturn();
 
       $response = (new Pipeline)
-        ->send($this->engine->execute($request)->getBody()->getContents())
+        ->send($this->engine->execute($request, $endpoint, $driver)->getBody()->getContents())
         ->through($pipes)
         ->via('transformResponse')
         ->thenReturn();
 
       return $response;
-    } catch (InterlocutorException $e) {
-      $exception = (new Pipeline)
-        ->send($e)
-        ->through(array_reverse($pipes))
-        ->via('handleExceptions')
-        ->thenReturn();
+    } catch (Throwable $exception) {
+      foreach (array_reverse($pipes) as $pipe) {
+        $exception = $pipe->handleExceptions($exception);
 
-      if (! ($exception instanceof Throwable)) {
-        return null;
+        if (! ($exception instanceof Throwable)) {
+          return $exception;
+        }
       }
 
       throw $exception;
     }
+  }
+
+  /**
+   * Set the configuration options for a specific driver.
+   * 
+   * @param  string  $driver
+   * @param  array  $options  []
+   * @return void
+   */
+  public static function configure(string $driver, array $options = []): void
+  {
+    static::$drivers[$driver] = array_merge_recursive(static::$drivers[$driver] ?? [], $options);
+  }
+
+  /**
+   * Retrieve the configuration options for a specific driver.
+   * 
+   * @param  \Anomalyce\Interlocutor\Contracts\Driver  $driver
+   * @return array
+   */
+  protected function getDriverConfiguration(Driver $driver): array
+  {
+    $className = get_class($driver);
+
+    if (! isset(static::$drivers[$className])) {
+      return [];
+    }
+
+    return static::$drivers[$className];
   }
 }
