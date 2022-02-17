@@ -3,12 +3,12 @@
 namespace Examples;
 
 use Throwable;
+use Anomalyce\Interlocutor\{ Contracts, Interlocutory };
 use Psr\Http\Message\{ ResponseInterface, RequestInterface };
-use Anomalyce\Interlocutor\{ Contracts, InterlocutorException, Communicates };
 
 class FreeIpApi implements Contracts\Endpoint
 {
-  use Communicates;
+  use Interlocutory;
 
   /**
    * Instantiate a new endpoint object.
@@ -97,11 +97,11 @@ class FreeIpApi implements Contracts\Endpoint
   /**
    * Handle any exceptions.
    * 
-   * @param  \Anomalyce\Interlocutor\InterlocutorException  $exception
-   * @return \Throwable|null
+   * @param  \Throwable  $exception
+   * @return mixed
    */
-  public function handleExceptions(InterlocutorException $exception): ?Throwable
+  public function handleExceptions(Throwable $exception): mixed
   {
-    return $exception;
+    //
   }
 }
