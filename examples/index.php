@@ -2,12 +2,20 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/FreeIpApi.php';
+require_once __DIR__.'/WHMCS/Driver.php';
+require_once __DIR__.'/WHMCS/Endpoints/GetClients.php';
 
 use Anomalyce\Interlocutor\{ Interlocutor, Engines };
 
 $interlocutor = new Interlocutor(new Engines\GuzzleHttp);
 
-$request = new \Examples\FreeIpApi('185.213.154.234');
+Interlocutor::configure(\Examples\WHMCS\Driver::class, [
+  'url'         => 'https://whmcs/includes/api.php',
+  'identifier'  => 'your-whmcs-api-identifier-here',
+  'secret'      => 'your-whmcs-api-secret-here',
+]);
+
+$request = new \Examples\WHMCS\Endpoints\GetClients('Closed');
 
 $response = $request->send();
 
