@@ -41,7 +41,7 @@ class Interlocutor
   {
     $this->engine = $engine;
 
-    static::$instance = $this;
+    static::setInstance($this);
   }
 
   /**
@@ -58,6 +58,17 @@ class Interlocutor
     }
 
     throw new InterlocutorException('You must first instantiate an Interlocutor object.', 501);
+  }
+
+  /**
+   * Set the current Interlocutor implementation.
+   * 
+   * @param  \Anomalyce\Interlocutor\Interlocutor|null  $instance
+   * @return void
+   */
+  public static function setInstance(?Interlocutor $instance): void
+  {
+    static::$instance = $instance;
   }
 
   /**
@@ -119,7 +130,7 @@ class Interlocutor
    * @param  \Anomalyce\Interlocutor\Contracts\Driver  $driver
    * @return array
    */
-  protected function getDriverConfiguration(Driver $driver): array
+  public function getDriverConfiguration(Driver $driver): array
   {
     $className = get_class($driver);
 

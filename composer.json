@@ -20,11 +20,17 @@
   },
   "require-dev": {
     "guzzlehttp/guzzle": "~7.4",
-    "pestphp/pest": "^1.21"
+    "pestphp/pest": "^1.21",
+    "pestphp/pest-plugin-mock": "^1.0"
   },
   "autoload": {
     "psr-4": {
       "Anomalyce\\Interlocutor\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Examples\\": "examples/"
     }
   },
   "suggest": {
