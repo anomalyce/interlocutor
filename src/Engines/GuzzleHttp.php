@@ -61,7 +61,7 @@ class GuzzleHttp implements Engine
       $options = [];
 
       if (! in_array($endpoint->method(), [ HttpVerb::GET, HttpVerb::HEAD, HttpVerb::OPTIONS ])) {
-        $data = $endpoint->data($driver?->data());
+        $data = $endpoint->data($driver?->data() ?? []);
 
         if (is_string($data)) {
           $options['json'] = $data;
