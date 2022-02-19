@@ -47,9 +47,9 @@ class GetClients implements Contracts\Endpoint
    * Declare the data to send along with your request.
    * 
    * @param  array  $data  []
-   * @return array
+   * @return array|string|null
    */
-  public function data(array $data = []): array
+  public function data(array $data = []): array|string|null
   {
     return array_merge($data, array_filter([
       'action' => 'GetClients',

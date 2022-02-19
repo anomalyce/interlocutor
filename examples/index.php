@@ -2,6 +2,9 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/FreeIpApi.php';
+require_once __DIR__.'/JsonPlaceholder/Driver.php';
+require_once __DIR__.'/JsonPlaceholder/GetPosts.php';
+require_once __DIR__.'/JsonPlaceholder/CreatePost.php';
 require_once __DIR__.'/WHMCS/Driver.php';
 require_once __DIR__.'/WHMCS/Endpoints/GetClients.php';
 

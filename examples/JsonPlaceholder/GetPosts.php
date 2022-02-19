@@ -1,25 +1,14 @@
 <?php
 
-namespace Examples;
+namespace Examples\JsonPlaceholder;
 
 use Throwable;
 use Anomalyce\Interlocutor\{ Contracts, Interlocutory };
 use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 
-class FreeIpApi implements Contracts\Endpoint
+class GetPosts implements Contracts\Endpoint
 {
   use Interlocutory;
-
-  /**
-   * Instantiate a new endpoint object.
-   * 
-   * @param  string  $ipaddress
-   * @return void
-   */
-  public function __construct(protected string $ipaddress)
-  {
-    //
-  }
 
   /**
    * Declare the HTTP method to use.
@@ -39,7 +28,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function url(string $baseUrl = null): string
   {
-    return "https://freeipapi.com/api/json/{$this->ipaddress}";
+    return "${baseUrl}/posts";
   }
 
   /**
@@ -50,7 +39,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function data(array $data = []): array|string|null
   {
-    return [];
+    return null;
   }
 
   /**
@@ -61,7 +50,9 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function headers(array $headers = []): array
   {
-    return [];
+    return array_merge($headers, [
+      //
+    ]);
   }
 
   /**
@@ -71,7 +62,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function throughDriver(): ?Contracts\Driver
   {
-    return null;
+    return new Driver;
   }
 
   /**
@@ -91,7 +82,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function transformResponse(mixed $response): mixed
   {
-    return json_decode($response, true);
+    return $response;
   }
 
   /**

@@ -1,22 +1,22 @@
 <?php
 
-namespace Examples;
+namespace Examples\JsonPlaceholder;
 
 use Throwable;
 use Anomalyce\Interlocutor\{ Contracts, Interlocutory };
 use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 
-class FreeIpApi implements Contracts\Endpoint
+class CreatePost implements Contracts\Endpoint
 {
   use Interlocutory;
 
   /**
    * Instantiate a new endpoint object.
    * 
-   * @param  string  $ipaddress
+   * @param  string  $subject
    * @return void
    */
-  public function __construct(protected string $ipaddress)
+  public function __construct(protected string $subject)
   {
     //
   }
@@ -28,7 +28,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function method(): Contracts\HttpVerb
   {
-    return Contracts\HttpVerb::GET;
+    return Contracts\HttpVerb::POST;
   }
 
   /**
@@ -39,7 +39,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function url(string $baseUrl = null): string
   {
-    return "https://freeipapi.com/api/json/{$this->ipaddress}";
+    return "${baseUrl}/posts";
   }
 
   /**
@@ -50,7 +50,10 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function data(array $data = []): array|string|null
   {
-    return [];
+    return json_encode([
+      'subject' => $this->subject,
+      'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel facilisis tellus. Curabitur posuere eros urna, vel fringilla justo condimentum tincidunt. Morbi condimentum nunc ut justo malesuada viverra. Sed pharetra vitae nibh nec sagittis. Phasellus ac porta urna. Nam quam eros, consequat vitae eros non, vehicula sodales est. Vestibulum nibh elit, malesuada ac fringilla quis, pharetra id lorem. In quis purus ultrices, lacinia justo sit amet, mollis mauris. Nam eget lacinia tortor, sit amet eleifend mi.',
+    ]);
   }
 
   /**
@@ -61,7 +64,9 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function headers(array $headers = []): array
   {
-    return [];
+    return array_merge($headers, [
+      //
+    ]);
   }
 
   /**
@@ -71,7 +76,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function throughDriver(): ?Contracts\Driver
   {
-    return null;
+    return new Driver;
   }
 
   /**
@@ -91,7 +96,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function transformResponse(mixed $response): mixed
   {
-    return json_decode($response, true);
+    return $response;
   }
 
   /**

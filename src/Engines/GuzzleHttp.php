@@ -4,6 +4,7 @@ namespace Anomalyce\Interlocutor\Engines;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\GuzzleException;
 use Anomalyce\Interlocutor\InterlocutorException;
 use Psr\Http\Message\{ ResponseInterface, RequestInterface };
@@ -64,9 +65,9 @@ class GuzzleHttp implements Engine
         $data = $endpoint->data($driver?->data() ?? []);
 
         if (is_string($data)) {
-          $options['json'] = $data;
-        } else {
-          $options['form_params'] = $data ?? [];
+          $options[RequestOptions::JSON] = json_decode($data, true);
+        } else if (! is_null($data)) {
+          $options[RequestOptions::FORM_PARAMS] = $data ?? [];
         }
       }
 
