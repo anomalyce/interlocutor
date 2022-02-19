@@ -81,7 +81,7 @@ class Interlocutor
   {
     $driver = $endpoint->throughDriver();
 
-    $driver->configuration($this->getDriverConfiguration($driver));
+    $driver?->configuration($this->getDriverConfiguration($driver));
 
     try {
       $pipes = array_filter([ $driver, $endpoint ]);

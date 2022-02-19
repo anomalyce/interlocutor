@@ -17,7 +17,7 @@ interface Endpoint
   /**
    * Declare the URL to use.
    * 
-   * @parma  string  $baseUrl  null
+   * @param  string  $baseUrl  null
    * @return string
    */
   public function url(string $baseUrl = null): string;
