@@ -1,27 +1,25 @@
 <?php
 
-namespace Examples\WHMCS\Endpoints;
+namespace Examples\FreeIpApi;
 
 use Throwable;
-use Examples\WHMCS\Driver;
 use Anomalyce\Interlocutor\{ Contracts, Interlocutory };
 use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 
 /**
- * @see https://developers.whmcs.com/api/api-index/
- * @see https://developers.whmcs.com/api-reference/getclients/
+ * @see https://freeipapi.com/
  */
-class GetClients implements Contracts\Endpoint
+class Geolocation implements Contracts\Endpoint
 {
   use Interlocutory;
 
   /**
    * Instantiate a new endpoint object.
    * 
-   * @param  string|null  $status  null
+   * @param  string|null  $ipaddress  null
    * @return void
    */
-  public function __construct(protected ?string $status = null)
+  public function __construct(protected ?string $ipaddress = null)
   {
     //
   }
@@ -33,7 +31,7 @@ class GetClients implements Contracts\Endpoint
    */
   public function method(): Contracts\HttpVerb
   {
-    return Contracts\HttpVerb::POST;
+    return Contracts\HttpVerb::GET;
   }
 
   /**
@@ -44,7 +42,7 @@ class GetClients implements Contracts\Endpoint
    */
   public function url(string $baseUrl = null): string
   {
-    return $baseUrl;
+    return "https://freeipapi.com/api/json/{$this->ipaddress}";
   }
 
   /**
@@ -55,10 +53,7 @@ class GetClients implements Contracts\Endpoint
    */
   public function data(array $data = []): array|string|null
   {
-    return array_merge($data, array_filter([
-      'action' => 'GetClients',
-      'status' => $this->status,
-    ]));
+    return [];
   }
 
   /**
@@ -69,9 +64,7 @@ class GetClients implements Contracts\Endpoint
    */
   public function headers(array $headers = []): array
   {
-    return array_merge($headers, [
-      //
-    ]);
+    return [];
   }
 
   /**
@@ -81,7 +74,7 @@ class GetClients implements Contracts\Endpoint
    */
   public function throughDriver(): ?Contracts\Driver
   {
-    return new Driver;
+    return null;
   }
 
   /**
@@ -101,7 +94,7 @@ class GetClients implements Contracts\Endpoint
    */
   public function transformResponse(mixed $response): mixed
   {
-    return $response;
+    return json_decode($response, true);
   }
 
   /**

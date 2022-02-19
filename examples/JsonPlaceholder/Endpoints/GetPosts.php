@@ -1,25 +1,15 @@
 <?php
 
-namespace Examples\JsonPlaceholder;
+namespace Examples\JsonPlaceholder\Endpoints;
 
 use Throwable;
+use Examples\JsonPlaceholder\Driver;
+use Psr\Http\Message\RequestInterface;
 use Anomalyce\Interlocutor\{ Contracts, Interlocutory };
-use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 
-class CreatePost implements Contracts\Endpoint
+class GetPosts implements Contracts\Endpoint
 {
   use Interlocutory;
-
-  /**
-   * Instantiate a new endpoint object.
-   * 
-   * @param  string  $subject
-   * @return void
-   */
-  public function __construct(protected string $subject)
-  {
-    //
-  }
 
   /**
    * Declare the HTTP method to use.
@@ -28,7 +18,7 @@ class CreatePost implements Contracts\Endpoint
    */
   public function method(): Contracts\HttpVerb
   {
-    return Contracts\HttpVerb::POST;
+    return Contracts\HttpVerb::GET;
   }
 
   /**
@@ -39,7 +29,7 @@ class CreatePost implements Contracts\Endpoint
    */
   public function url(string $baseUrl = null): string
   {
-    return "${baseUrl}/posts";
+    return "{$baseUrl}/posts";
   }
 
   /**
@@ -50,10 +40,7 @@ class CreatePost implements Contracts\Endpoint
    */
   public function data(array $data = []): array|string|null
   {
-    return json_encode([
-      'subject' => $this->subject,
-      'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel facilisis tellus. Curabitur posuere eros urna, vel fringilla justo condimentum tincidunt. Morbi condimentum nunc ut justo malesuada viverra. Sed pharetra vitae nibh nec sagittis. Phasellus ac porta urna. Nam quam eros, consequat vitae eros non, vehicula sodales est. Vestibulum nibh elit, malesuada ac fringilla quis, pharetra id lorem. In quis purus ultrices, lacinia justo sit amet, mollis mauris. Nam eget lacinia tortor, sit amet eleifend mi.',
-    ]);
+    return null;
   }
 
   /**

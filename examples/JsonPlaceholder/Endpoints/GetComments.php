@@ -1,22 +1,23 @@
 <?php
 
-namespace Examples;
+namespace Examples\JsonPlaceholder\Endpoints;
 
 use Throwable;
+use Examples\JsonPlaceholder\Driver;
+use Psr\Http\Message\RequestInterface;
 use Anomalyce\Interlocutor\{ Contracts, Interlocutory };
-use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 
-class FreeIpApi implements Contracts\Endpoint
+class GetComments implements Contracts\Endpoint
 {
   use Interlocutory;
 
   /**
    * Instantiate a new endpoint object.
    * 
-   * @param  string  $ipaddress
+   * @param  integer|null  $post  null
    * @return void
    */
-  public function __construct(protected string $ipaddress)
+  public function __construct(protected ?int $post = null)
   {
     //
   }
@@ -39,7 +40,11 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function url(string $baseUrl = null): string
   {
-    return "https://freeipapi.com/api/json/{$this->ipaddress}";
+    $queryStrings = http_build_query([
+      'postId' => $this->post,
+    ]);
+
+    return "{$baseUrl}/comments?{$queryStrings}";
   }
 
   /**
@@ -50,7 +55,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function data(array $data = []): array|string|null
   {
-    return [];
+    return null;
   }
 
   /**
@@ -61,7 +66,9 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function headers(array $headers = []): array
   {
-    return [];
+    return array_merge($headers, [
+      //
+    ]);
   }
 
   /**
@@ -71,7 +78,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function throughDriver(): ?Contracts\Driver
   {
-    return null;
+    return new Driver;
   }
 
   /**
@@ -91,7 +98,7 @@ class FreeIpApi implements Contracts\Endpoint
    */
   public function transformResponse(mixed $response): mixed
   {
-    return json_decode($response, true);
+    return $response;
   }
 
   /**

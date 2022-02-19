@@ -1,27 +1,23 @@
 <?php
 
-namespace Examples\WHMCS\Endpoints;
+namespace Examples\JsonPlaceholder\Endpoints;
 
 use Throwable;
-use Examples\WHMCS\Driver;
+use Examples\JsonPlaceholder\Driver;
+use Psr\Http\Message\RequestInterface;
 use Anomalyce\Interlocutor\{ Contracts, Interlocutory };
-use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 
-/**
- * @see https://developers.whmcs.com/api/api-index/
- * @see https://developers.whmcs.com/api-reference/getclients/
- */
-class GetClients implements Contracts\Endpoint
+class DeletePost implements Contracts\Endpoint
 {
   use Interlocutory;
 
   /**
    * Instantiate a new endpoint object.
    * 
-   * @param  string|null  $status  null
+   * @param  integer  $post
    * @return void
    */
-  public function __construct(protected ?string $status = null)
+  public function __construct(protected int $post)
   {
     //
   }
@@ -33,7 +29,7 @@ class GetClients implements Contracts\Endpoint
    */
   public function method(): Contracts\HttpVerb
   {
-    return Contracts\HttpVerb::POST;
+    return Contracts\HttpVerb::DELETE;
   }
 
   /**
@@ -44,7 +40,7 @@ class GetClients implements Contracts\Endpoint
    */
   public function url(string $baseUrl = null): string
   {
-    return $baseUrl;
+    return "{$baseUrl}/posts/{$this->post}";
   }
 
   /**
@@ -55,10 +51,9 @@ class GetClients implements Contracts\Endpoint
    */
   public function data(array $data = []): array|string|null
   {
-    return array_merge($data, array_filter([
-      'action' => 'GetClients',
-      'status' => $this->status,
-    ]));
+    return array_merge($data, [
+      //
+    ]);
   }
 
   /**

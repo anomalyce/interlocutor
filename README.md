@@ -1,94 +1,84 @@
 # Interlocutor
-A HTTP wrapper that helps with keeping your API integrations structured.
+A HTTP wrapper that keeps your API integrations well organised.
 
-## Setup
-We need to create an Interlocutor object somewhere in our application, this may typically be inside of a service provider (or wherever else makes sense in your project). The Interlocutor object expects an [`\Anomalyce\Interlocutor\Contracts\Engine`](src/Contracts/Engine.php) object for the underlying HTTP client - by default, this is [Guzzle](https://github.com/guzzle/guzzle).
+```bash
+composer require anomalyce/interlocutor
+```
+
+<br>
+
+## Concepts
+Before we start looking at some code, it is important to understand a few core concepts behind this package...
+
++ **Engines**  
+  The Interlocutor package doesn't actually send any HTTP requests on its own, but rather relies on an underlying HTTP client (or engine) to do so. You may easily create an implementation for your favourite HTTP client by making sure it implements the `\Anomalyce\Interlocutor\Contracts\Engine` interface.
+  
+  By default, the Interlocutor package provides a simple [Guzzle](https://github.com/guzzle/guzzle) engine implementation. While this is provided out-of-the-box, you must manually decide to install the `guzzlehttp/guzzle` Composer package should you intend to use it.
+
++ **Endpoints**  
+  The Interlocutor package is built on the idea that every API endpoint that you are intending on interacting with, should have its very own dedicated endpoint class (implementing the `\Anomalyce\Interlocutor\Contracts\Endpoint` interface).
+  
+  Not only does this give you the benefit of having everything related to that API endpoint in one location, but it also makes it a breeze to use the same request in multiple locations across your application.
+  
+  In summary, an endpoint class contains all the required information needed to make the request. The HTTP verb, the endpoint URL, the data and the headers it requires. It also allows you to easily make modifications to the request object (as assembled by the engine), transform the response or handle any exceptions that may be thrown.
+
++ **Drivers**  
+  If you're working against any sizable API, you're more likely than not interacting with more than just a couple of endpoints, which means that you're all of a sudden repeating a bunch of code for each endpoint...
+  
+  This is where drivers come into the picture. A driver (implementing the `\Anomalyce\Interlocutor\Contracts\Driver` interface) is basically a way of doing all of the repetitive tasks in one place (e.g. specifying the base URL, setting common headers, API credentials, parsing the response using `json_decode()` etc.).
+  
+  All of the data specified by an in-use driver gets passed down from its driver method to the respective endpoint method as their argument. The only exception, no pun intended, is the `handleExceptions` method which is endpoint first, driver last. It is then up to the endpoint on how to proceed with this information (merging, overriding or ignoring).
+
+<br>
+
+## Usage
+In our examples below, we'll use the provided out-of-the-box engine for Guzzle, and thus must also install the Guzzle HTTP library.
+
+```bash
+composer require guzzlehttp/guzzle
+```
+
+Next up we need to create our Interlocutor object. This should only have to be done once across your application, for most use cases anyway. Place it wherever it makes sense in your application (e.g. in a service provider).
 
 ```php
-$interlocutor = new \Anomalyce\Interlocutor\Interlocutor(
-  new \Anomalyce\Interlocutor\Engines\GuzzleHttp
+use Anomalyce\Interlocutor\{ Engines, Interlocutor };
+
+$interlocutor = new Interlocutor(
+  new Engines\GuzzleHttp
 );
 ```
 
-## Endpoints
-For every single API endpoint you intend to interact with, you'll create a class that implements the [`\Anomalyce\Interlocutor\Contracts\Endpoint`](src/Contracts/Endpoint.php) interface.
+That's really all you have to do as far as setup goes. It is now time to create your endpoints and/or drivers, but seeing as that heavily relies on how the API itself looks, I'll simply refer you to our examples and various interfaces.
 
-You may find an example endpoint class for the [Free IP Api](https://freeipapi.com) in the [examples directory](examples/FreeIpApi.php), but in short, you need to define the following methods:
+**Interfaces**
++ [`\Anomalyce\Interlocutor\Contracts\Endpoints`](src/Contracts/Endpoints.php)
++ [`\Anomalyce\Interlocutor\Contracts\Driver`](src/Contracts/Driver.php)
 
-+ `public function method(): \Anomalyce\Interlocutor\Contracts\HttpVerb;`
-+ `public function url(string $baseUrl = null): string;`
-+ `public function data(array $data = []): array;`
-+ `public function headers(array $headers = []): array;`
-+ `public function throughDriver(): ?\Anomalyce\Interlocutor\Contracts\Driver;`
-+ `public function interjectRequest(\Psr\Http\Message\RequestInterface $request): \Psr\Http\Message\RequestInterface;`
-+ `public function transformResponse(mixed $response): mixed;`
-+ `public function handleExceptions(\Throwable $exception): mixed;`
+**Examples**
++ [JsonPlaceholder](examples/JsonPlaceholder)
++ [WHMCS](examples/WHMCS/)
++ [FreeIpApi](examples/FreeIpApi/)
 
-Optionally you may pass in any required user data into the endpoint's constructor, as the Interlocutor isn't relying on it.
-
-### Drivers
-In case you're working with a collection of endpoints, it is advisable to define a driver object implementing the [`\Anomalyce\Interlocutor\Contracts\Driver`](src/Contracts/Driver.php) interface. This allows you to manipulate the request/response, specify common headers/data and handle exceptions on a global scale for every endpoint that returns an object of this driver in their `throughDriver()` method.
-
-+ `public function configuration(array $options = []): void;`
-+ `public function baseUrl(): string;`
-+ `public function data(): array;`
-+ `public function headers(): array;`
-+ `public function interjectRequest(\Psr\Http\Message\RequestInterface $request): \Psr\Http\Message\RequestInterface;`
-+ `public function transformResponse(mixed $response): mixed;`
-+ `public function handleExceptions(Throwable $exception): mixed;`
-
-The values of `baseUrl()`, `data()` and `headers()` are passed down to each individual endpoint class' relative methods.
-
-Additionally, should you not want to hardcode the API credentials (or whatever other options you may need), you may utilise the `configure()` method on the Interlocutor object to pass in external data to a driver.
+Once you've got your endpoint objects all set up, you may go ahead and send the request in two different ways. Either, you pass it to the `$interlocutor` object's `send` method, like so...
 
 ```php
-Interlocutor::configure(\Examples\WHMCS\Driver::class, [
-  'url'         => 'https://whmcs/includes/api.php',
-  'identifier'  => 'your-whmcs-api-identifier-here',
-  'secret'      => 'your-whmcs-api-secret-here',
-]);
+$request = new \Example\Vendor\MyEndpoint('passing-data-here');
+
+$response = $interlocutor->send($request);
+
+print_r($response);
 ```
 
-## Usage
-We have two options when it comes to actually sending the request, either way, we need to instantiate the endpoint...
+Or, you can utilise the `\Anomalyce\Interlocutor\Interlocutory` trait within your endpoint classes to have them be self-sending. I'll let you decide whichever way suits you and your application best.
 
 ```php
-$request = new \Examples\FreeIpApi($_SERVER['REMOTE_ADDR']);
-```
+// class MyEndpoint implements \Anomalyce\Interlocutor\Contracts\Endpoint {
+//   use \Anomalyce\Interlocutor\Interlocutory;
+// }
 
-+ **Option A)**
-  We pass the endpoint object directly into the Interlocutor's send method.
+$request = new \Example\Vendor\MyEndpoint('passing-data-here');
 
-  ```php
-  $response = $interlocutor->send($request);
+$response = $request->send();
 
-  print_r($response);
-  ```
-
-+ **Option B)**
-  We utilise the `\Anomalyce\Interlocutor\Interlocutory` trait on the endpoint class itself, which makes a `send` method available directly on the endpoint object.
-
-  ```php
-  // class FreeIpApi implements \Anomalyce\Interlocutor\Contracts\Endpoint {
-  //   use \Anomalyce\Interlocutor\Interlocutory;
-  // }
-
-  $response = $request->send();
-
-  print_r($response);
-  ```
-
-```json
-{
-  "ipVersion": "4",
-  "ipAddress": "140.82.121.4",
-  "latitude": "37.7757",
-  "longitude": "-122.395203",
-  "countryName": "United States of America",
-  "countryCode": "US",
-  "timeZone": "-08:00",
-  "zipCode": "94107",
-  "cityName": "San Francisco",
-  "regionName": "California",
-}
+print_r($response);
 ```

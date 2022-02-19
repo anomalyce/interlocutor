@@ -6,6 +6,9 @@ use Throwable;
 use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 use Anomalyce\Interlocutor\{ Contracts, InterlocutorException };
 
+/**
+ * @see https://developers.whmcs.com/api/authentication/
+ */
 class Driver implements Contracts\Driver
 {
   /**

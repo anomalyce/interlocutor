@@ -1,14 +1,27 @@
 <?php
 
-namespace Examples\JsonPlaceholder;
+namespace Examples\JsonPlaceholder\Endpoints;
 
 use Throwable;
+use Examples\JsonPlaceholder\Driver;
+use Psr\Http\Message\RequestInterface;
 use Anomalyce\Interlocutor\{ Contracts, Interlocutory };
-use Psr\Http\Message\{ ResponseInterface, RequestInterface };
 
-class GetPosts implements Contracts\Endpoint
+class CreatePost implements Contracts\Endpoint
 {
   use Interlocutory;
+
+  /**
+   * Instantiate a new endpoint object.
+   * 
+   * @param  string  $title
+   * @param  string  $body
+   * @return void
+   */
+  public function __construct(protected string $title, protected string $body)
+  {
+    //
+  }
 
   /**
    * Declare the HTTP method to use.
@@ -17,7 +30,7 @@ class GetPosts implements Contracts\Endpoint
    */
   public function method(): Contracts\HttpVerb
   {
-    return Contracts\HttpVerb::GET;
+    return Contracts\HttpVerb::POST;
   }
 
   /**
@@ -28,7 +41,7 @@ class GetPosts implements Contracts\Endpoint
    */
   public function url(string $baseUrl = null): string
   {
-    return "${baseUrl}/posts";
+    return "{$baseUrl}/posts";
   }
 
   /**
@@ -39,7 +52,10 @@ class GetPosts implements Contracts\Endpoint
    */
   public function data(array $data = []): array|string|null
   {
-    return null;
+    return json_encode(array_merge($data, [
+      'title' => $this->title,
+      'body' => $this->body,
+    ]));
   }
 
   /**

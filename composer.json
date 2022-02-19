@@ -21,7 +21,8 @@
   "require-dev": {
     "guzzlehttp/guzzle": "~7.4",
     "pestphp/pest": "^1.21",
-    "pestphp/pest-plugin-mock": "^1.0"
+    "pestphp/pest-plugin-mock": "^1.0",
+    "vlucas/phpdotenv": "^5.4"
   },
   "autoload": {
     "psr-4": {
