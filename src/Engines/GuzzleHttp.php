@@ -61,7 +61,13 @@ class GuzzleHttp implements Engine
       $options = [];
 
       if (! in_array($endpoint->method(), [ HttpVerb::GET, HttpVerb::HEAD, HttpVerb::OPTIONS ])) {
-        $options['form_params'] = $endpoint->data($driver?->data() ?? []);
+        $data = $endpoint->data($driver?->data());
+
+        if (is_string($data)) {
+          $options['json'] = $data;
+        } else {
+          $options['form_params'] = $data ?? [];
+        }
       }
 
       return $this->client->send($request, $options);

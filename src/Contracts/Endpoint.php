@@ -26,9 +26,9 @@ interface Endpoint
    * Declare the data to send along with your request.
    * 
    * @param  array  $data  []
-   * @return array
+   * @return string|array|null
    */
-  public function data(array $data = []): array;
+  public function data(array $data = []): string|array|null;
 
   /**
    * Declare the HTTP headers to use.
