@@ -5,7 +5,6 @@ namespace Anomalyce\Interlocutor;
 use Closure;
 use Throwable;
 use Illuminate\Pipeline\Pipeline;
-use Psr\Http\Message\ResponseInterface;
 use Anomalyce\Interlocutor\Contracts\{ Driver, Endpoint, Engine };
 
 class Interlocutor

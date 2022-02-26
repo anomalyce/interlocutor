@@ -2,8 +2,9 @@
 
 namespace Anomalyce\Interlocutor\Contracts;
 
+use Closure;
 use Throwable;
-use Psr\Http\Message\{ ResponseInterface, RequestInterface };
+use Psr\Http\Message\RequestInterface;
 
 interface Endpoint
 {
@@ -48,16 +49,20 @@ interface Endpoint
   /**
    * Interject the request.
    * 
+   * @param  \Psr\Http\Message\RequestInterface  $request
+   * @param  \Closure  $next
    * @return \Psr\Http\Message\RequestInterface
    */
-  public function interjectRequest(RequestInterface $request): RequestInterface;
+  public function interjectRequest(RequestInterface $request, Closure $next): RequestInterface;
 
   /**
    * Transform the response.
    * 
+   * @param  mixed  $response
+   * @param  \Closure  $next
    * @return mixed
    */
-  public function transformResponse(mixed $response): mixed;
+  public function transformResponse(mixed $response, Closure $next): mixed;
 
   /**
    * Handle any exceptions.

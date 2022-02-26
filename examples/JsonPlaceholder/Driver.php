@@ -2,8 +2,9 @@
 
 namespace Examples\JsonPlaceholder;
 
+use Closure;
 use Throwable;
-use Psr\Http\Message\{ ResponseInterface, RequestInterface };
+use Psr\Http\Message\RequestInterface;
 use Anomalyce\Interlocutor\{ Contracts, InterlocutorException };
 
 /**
@@ -59,21 +60,25 @@ class Driver implements Contracts\Driver
   /**
    * Interject the request.
    * 
+   * @param  \Psr\Http\Message\RequestInterface  $request
+   * @param  \Closure  $next
    * @return \Psr\Http\Message\RequestInterface
    */
-  public function interjectRequest(RequestInterface $request): RequestInterface
+  public function interjectRequest(RequestInterface $request, Closure $next): RequestInterface
   {
-    return $request;
+    return $next($request);
   }
 
   /**
    * Transform the response.
    * 
+   * @param  mixed  $response
+   * @param  \Closure  $next
    * @return mixed
    */
-  public function transformResponse(mixed $response): mixed
+  public function transformResponse(mixed $response, Closure $next): mixed
   {
-    return json_decode($response, true);
+    return $next(json_decode($response, true));
   }
 
   /**
