@@ -74,9 +74,10 @@ class Interlocutor
    * Send a request using an endpoint.
    * 
    * @param  \Anomalyce\Interlocutor\Contracts\Endpoint  $endpoint
+   * @param  array  $arguments  []
    * @return mixed
    */
-  public function send(Endpoint $endpoint): mixed
+  public function send(Endpoint $endpoint, array $arguments = []): mixed
   {
     $driver = $endpoint->throughDriver();
 
@@ -92,7 +93,7 @@ class Interlocutor
         ->thenReturn();
 
       $response = (new Pipeline)
-        ->send($this->engine->execute($request, $endpoint, $driver)->getBody()->getContents())
+        ->send($this->engine->execute($request, $endpoint, $driver, $arguments)->getBody()->getContents())
         ->through($pipes)
         ->via('transformResponse')
         ->thenReturn();

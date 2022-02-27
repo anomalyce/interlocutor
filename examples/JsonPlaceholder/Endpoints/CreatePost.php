@@ -13,15 +13,33 @@ class CreatePost implements Contracts\Endpoint
   use Interlocutory;
 
   /**
-   * Instantiate a new endpoint object.
+   * Create a full post.
    * 
    * @param  string  $title
    * @param  string  $body
-   * @return void
+   * @return mixed
    */
-  public function __construct(protected string $title, protected string $body)
+  #[constructor]
+  public function full(string $title, string $body): mixed
   {
-    //
+    return $this->send([
+      'title' => $title,
+      'body' => $body,
+    ]);
+  }
+
+  /**
+   * Create a short post.
+   * 
+   * @param  string  $title
+   * @return mixed
+   */
+  #[constructor]
+  public function short(string $title): mixed
+  {
+    return $this->send([
+      'title' => $title,
+    ]);
   }
 
   /**
@@ -54,8 +72,7 @@ class CreatePost implements Contracts\Endpoint
   public function data(array $data = []): array|string|null
   {
     return json_encode(array_merge($data, [
-      'title' => $this->title,
-      'body' => $this->body,
+      //
     ]));
   }
 

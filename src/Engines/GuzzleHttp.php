@@ -52,17 +52,20 @@ class GuzzleHttp implements Engine
    * @param  \Psr\Http\Message\RequestInterface  $request
    * @param  \Anomalyce\Interlocutor\Contracts\Endpoint  $endpoint
    * @param  \Anomalyce\Interlocutor\Contracts\Driver|null  $driver  null
+   * @param  array  $arguments  []
    * @return \Psr\Http\Message\ResponseInterface
    * 
    * @throws \Anomalyce\Interlocutor\InterlocutorException
    */
-  public function execute(RequestInterface $request, Endpoint $endpoint, ?Driver $driver = null): ResponseInterface
+  public function execute(RequestInterface $request, Endpoint $endpoint, ?Driver $driver = null, array $arguments = []): ResponseInterface
   {
     try {
       $options = [];
 
       if (! in_array($endpoint->method(), [ HttpVerb::GET, HttpVerb::HEAD, HttpVerb::OPTIONS ])) {
-        $data = $endpoint->data($driver?->data() ?? []);
+        $data = $endpoint->data(
+          array_merge($driver?->data() ?? [], ...$arguments)
+        );
 
         if (is_string($data)) {
           $options[RequestOptions::JSON] = json_decode($data, true);

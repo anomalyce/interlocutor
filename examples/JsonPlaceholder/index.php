@@ -27,7 +27,9 @@ print_r((new Endpoints\GetPosts)->send());
 // print_r((new Endpoints\GetComments(post: 1))->send());
 
 // POST /posts
-// print_r((new Endpoints\CreatePost('My New Post', 'Lorem ipsum dolor sit amet...'))->send());
+// print_r((new Endpoints\CreatePost('This will fail', 'because we have defined alternative constructors in either full() or short().'))->send());
+// print_r((new Endpoints\CreatePost)->full('This will post a title', 'and a body to go with it.'));
+// print_r((new Endpoints\CreatePost)->short('This will only post a title'));
 
 // PUT /posts/1
 // print_r((new Endpoints\UpdatePost([
