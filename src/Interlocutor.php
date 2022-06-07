@@ -93,7 +93,7 @@ class Interlocutor
         ->thenReturn();
 
       $response = (new Pipeline)
-        ->send($this->engine->execute($request, $endpoint, $driver, $arguments)->getBody()->getContents())
+        ->send($this->engine->execute($request, $endpoint, $driver, $arguments))
         ->through($pipes)
         ->via('transformResponse')
         ->thenReturn();
